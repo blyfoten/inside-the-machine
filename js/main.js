@@ -1,136 +1,47 @@
-import { createModule1 } from './modules/mod1_hardware.js';
-import { createModule2 } from './modules/mod2_files.js';
-import { createModule3 } from './modules/mod3_memory.js';
-import { createModule4 } from './modules/mod4_cpu_clock.js';
-import { createModule5 } from './modules/mod5_c_to_asm.js';
-import { createModule6 } from './modules/mod6_interrupts.js';
-import { createModule7 } from './modules/mod7_gpu.js';
-import { createModule8 } from './modules/mod8_capstone.js';
+import { mountChapter1 } from './chapters/ch1_hardware.js';
+import { mountChapter2 } from './chapters/ch2_files.js';
+import { mountChapter3 } from './chapters/ch3_memory.js';
+import { mountChapter4 } from './chapters/ch4_clock.js';
+import { mountChapter5 } from './chapters/ch5_code.js';
+import { mountChapter6 } from './chapters/ch6_interrupts.js';
+import { mountChapter7 } from './chapters/ch7_gpu.js';
 
-const MODULES = [
-  {
-    id: '01',
-    title: 'Anatomy of a Computer',
-    tag: 'CPU • RAM • HDD/SSD • GPU',
-    factory: createModule1
-  },
-  {
-    id: '02',
-    title: 'Files, Bytes & Storage',
-    tag: 'Hex Editor • Inodes • Platter',
-    factory: createModule2
-  },
-  {
-    id: '03',
-    title: 'Stack, Heap & Pointers',
-    tag: 'Memory Map • malloc • Arrows',
-    factory: createModule3
-  },
-  {
-    id: '04',
-    title: 'Clock Cycles & Registers',
-    tag: 'Fetch-Decode-Exec • Stalls',
-    factory: createModule4
-  },
-  {
-    id: '05',
-    title: 'C → Assembly → Machine',
-    tag: 'Cycle Stepper • PC • Stack',
-    factory: createModule5
-  },
-  {
-    id: '06',
-    title: 'Interrupts & Preemption',
-    tag: 'IRQ • IVT • Context Switch',
-    factory: createModule6
-  },
-  {
-    id: '07',
-    title: 'CPU ↔ GPU Graphics',
-    tag: 'PCIe • Shaders • VRAM Hex',
-    factory: createModule7
-  },
-  {
-    id: '08',
-    title: 'Capstone: Key to Pixel',
-    tag: 'Full Computer End-to-End',
-    factory: createModule8
-  }
-];
+// Mount all 7 scrollytelling chapters onto the single scrollable page
+mountChapter1(document.getElementById('ch-hardware'));
+mountChapter2(document.getElementById('ch-files'));
+mountChapter3(document.getElementById('ch-memory'));
+mountChapter4(document.getElementById('ch-clock'));
+mountChapter5(document.getElementById('ch-code'));
+mountChapter6(document.getElementById('ch-interrupts'));
+mountChapter7(document.getElementById('ch-gpu'));
 
-let currentIndex = 0;
-let activeInstance = null;
-const visited = new Set([0]);
-
-const navEl = document.getElementById('module-nav');
-const stageBody = document.getElementById('stage-body');
-const badgeEl = document.getElementById('module-badge');
-const titleEl = document.getElementById('module-title');
-const btnPrev = document.getElementById('btn-prev');
-const btnNext = document.getElementById('btn-next');
-const progressLabel = document.getElementById('progress-label');
-const progressFill = document.getElementById('progress-fill');
-
-function renderNav() {
-  navEl.innerHTML = '';
-  MODULES.forEach((mod, idx) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = `nav-item${idx === currentIndex ? ' active' : ''}${visited.has(idx) ? ' visited' : ''}`;
-    btn.innerHTML = `
-      <span class="nav-num">${mod.id}</span>
-      <span class="nav-meta">
-        <span class="nav-title">${mod.title}</span>
-        <span class="nav-tag">${mod.tag}</span>
-      </span>
-    `;
-    btn.addEventListener('click', () => loadModule(idx));
-    navEl.appendChild(btn);
-  });
-
-  progressLabel.textContent = `${visited.size} / ${MODULES.length}`;
-  progressFill.style.width = `${(visited.size / MODULES.length) * 100}%`;
+// Hairline reading progress bar
+const progressBar = document.getElementById('scroll-progress-bar');
+function updateScrollProgress() {
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = max > 0 ? Math.min(100, Math.max(0, (window.scrollY / max) * 100)) : 0;
+  progressBar.style.width = `${pct}%`;
 }
+window.addEventListener('scroll', updateScrollProgress, { passive: true });
+updateScrollProgress();
 
-function loadModule(idx) {
-  if (idx < 0 || idx >= MODULES.length) return;
+// Active chapter highlight in slim top navigation bar
+const pills = Array.from(document.querySelectorAll('.chap-pill'));
+const sections = Array.from(document.querySelectorAll('section.chapter'));
 
-  if (activeInstance && typeof activeInstance.destroy === 'function') {
-    activeInstance.destroy();
+const chapterObserver = new IntersectionObserver(
+  (entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        const id = entry.target.id;
+        pills.forEach((p) => p.classList.toggle('active', p.dataset.ch === id));
+      }
+    }
+  },
+  {
+    rootMargin: '-35% 0px -55% 0px',
+    threshold: 0
   }
-  // Clear any flying packets in flight
-  const packetLayer = document.getElementById('packet-layer');
-  if (packetLayer) packetLayer.innerHTML = '';
+);
 
-  currentIndex = idx;
-  visited.add(idx);
-  const mod = MODULES[idx];
-
-  badgeEl.textContent = `MODULE ${mod.id}`;
-  titleEl.textContent = mod.title;
-  btnPrev.disabled = idx === 0;
-  btnNext.disabled = idx === MODULES.length - 1;
-  btnNext.textContent = idx === MODULES.length - 1 ? 'Completed ✓' : 'Next →';
-
-  stageBody.innerHTML = '';
-  activeInstance = mod.factory();
-  activeInstance.init(stageBody);
-
-  renderNav();
-}
-
-btnPrev.addEventListener('click', () => loadModule(currentIndex - 1));
-btnNext.addEventListener('click', () => loadModule(currentIndex + 1));
-
-window.addEventListener('keydown', (e) => {
-  const tag = (e.target && e.target.tagName) || '';
-  if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-  if (e.key === 'ArrowRight' && currentIndex < MODULES.length - 1) {
-    loadModule(currentIndex + 1);
-  } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
-    loadModule(currentIndex - 1);
-  }
-});
-
-// Boot into Module 1
-loadModule(0);
+sections.forEach((s) => chapterObserver.observe(s));

@@ -121,7 +121,7 @@ export class HexEditor {
     for (const rowStart of rows) {
       if (prevAddr !== null && rowStart - prevAddr > 8) {
         const gap = document.createElement('div');
-        gap.style.cssText = 'text-align:center;color:#4f6485;font-size:10px;padding:3px 0;border-top:1px dashed #24324a;border-bottom:1px dashed #24324a;margin:3px 0;';
+        gap.style.cssText = 'text-align:center;color:var(--ink-muted);font-size:10px;padding:3px 0;border-top:1px dashed var(--border);border-bottom:1px dashed var(--border);margin:3px 0;';
         gap.textContent = `⋮  unallocated gap (${rowStart - prevAddr - 8} bytes)  ⋮`;
         wrap.appendChild(gap);
       }
@@ -196,7 +196,7 @@ export class HexEditor {
     const meta = document.createElement('div');
     meta.style.cssText = 'display:flex;gap:10px;align-items:center;flex-wrap:wrap;';
     meta.innerHTML = `
-      <span style="color:var(--cyan);font-weight:700">${hex4(addr)}</span>
+      <span style="color:var(--blue);font-weight:700">${hex4(addr)}</span>
       <span class="pill">${regionLabel}</span>
       <span>Hex: <strong style="color:var(--amber)">0x${hex2(val)}</strong></span>
       <span>Dec: <strong>${val}</strong></span>
@@ -207,7 +207,7 @@ export class HexEditor {
     const bitWrap = document.createElement('div');
     bitWrap.style.cssText = 'display:flex;align-items:center;gap:6px;';
     const bitLabel = document.createElement('span');
-    bitLabel.style.color = 'var(--text-muted)';
+    bitLabel.style.color = 'var(--ink-muted)';
     bitLabel.textContent = this.editable ? 'Flip bits:' : 'Bits:';
     bitWrap.appendChild(bitLabel);
 
@@ -241,7 +241,7 @@ export class HexEditor {
       inp.maxLength = 2;
       inp.value = hex2(val);
       inp.title = 'Type 2-digit hex (00-FF) & press Enter';
-      inp.style.cssText = 'width:34px;background:#090d14;border:1px solid var(--cyan);border-radius:4px;color:var(--amber);font-family:var(--font-mono);font-size:11px;text-align:center;padding:2px;';
+      inp.style.cssText = 'width:34px;background:#ffffff;border:1.5px solid var(--blue);border-radius:4px;color:var(--ink);font-family:var(--font-mono);font-size:11px;font-weight:700;text-align:center;padding:2px;';
       inp.addEventListener('change', () => {
         const parsed = parseInt(inp.value, 16);
         if (!Number.isNaN(parsed) && parsed >= 0 && parsed <= 255) {

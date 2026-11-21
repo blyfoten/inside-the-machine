@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inside the Machine — Interactive Visual CS Course</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Left Navigation Rail -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="26" height="26">
+            <rect x="7" y="7" width="18" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="2"/>
+            <rect x="12" y="12" width="8" height="8" rx="1" fill="currentColor" opacity="0.9"/>
+            <path d="M11 2v5M16 2v5M21 2v5M11 25v5M16 25v5M21 25v5M2 11h5M2 16h5M2 21h5M25 11h5M25 16h5M25 21h5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">INSIDE THE MACHINE</div>
+          <div class="brand-sub">Visual CS Course</div>
+        </div>
+      </div>
+
+      <nav class="module-nav" id="module-nav" aria-label="Course Modules">
+        <!-- Populated dynamically by js/main.js -->
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span>Course Progress</span>
+            <span id="progress-label">1 / 8</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill" style="width: 12.5%"></div>
+          </div>
+        </div>
+        <div class="kbd-hint">
+          <kbd>←</kbd> <kbd>→</kbd> Switch modules
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Interactive Stage -->
+    <main class="main-stage">
+      <header class="stage-header">
+        <div class="header-left">
+          <span class="module-badge" id="module-badge">MODULE 01</span>
+          <h1 class="module-title" id="module-title">Anatomy of a Computer</h1>
+        </div>
+        <div class="header-right">
+          <button class="btn btn-ghost" id="btn-prev" title="Previous Module">← Prev</button>
+          <button class="btn btn-primary" id="btn-next" title="Next Module">Next →</button>
+        </div>
+      </header>
+
+      <!-- Live 1-line Narration Banner -->
+      <div class="narration-bar" id="narration-bar">
+        <span class="narration-dot"></span>
+        <span class="narration-text" id="narration-text">Click a hardware component or run an animation scenario below.</span>
+      </div>
+
+      <!-- Dynamic Module Mount Point -->
+      <section class="stage-body" id="stage-body">
+        <!-- Rendered by active module -->
+      </section>
+    </main>
+  </div>
+
+  <!-- Flying Data Packet Overlay Layer -->
+  <div id="packet-layer" class="packet-layer" aria-hidden="true"></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

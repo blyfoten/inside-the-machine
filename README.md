@@ -1,5 +1,7 @@
 # Inside the Machine — Interactive Visual Computer Science Course
 
+Live at <https://inside.cfor.se>.
+
 An animation-first, minimal-text interactive course for new Computer Science students covering how computers work from physical hardware up through C, assembly, memory, interrupts, and GPU graphics.
 
 ## Modules

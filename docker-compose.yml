@@ -1,0 +1,11 @@
+services:
+  inside-the-machine:
+    image: nginx:alpine
+    container_name: inside-the-machine
+    restart: unless-stopped
+    ports:
+      - "172.17.0.1:3100:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro
+      - ./styles.css:/usr/share/nginx/html/styles.css:ro
+      - ./js:/usr/share/nginx/html/js:ro
